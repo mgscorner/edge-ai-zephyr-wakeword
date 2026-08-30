@@ -1,0 +1,14 @@
+services:
+  zephyr-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zephyr-devbox
+    ports: 
+    - "8080:8080"
+    - "2222:22"
+    volumes: 
+    - ./app:/root/zephyrproject/app
+    working_dir: /root/zephyrproject/app
+    stdin_open: true 
+    tty: true        
