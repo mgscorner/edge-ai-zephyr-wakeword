@@ -78,7 +78,7 @@ The integration required:
 The model and Edge Impulse runtime now compile and link successfully into the
 Zephyr firmware. 
 The Edge Impulse Zephyr deployment package is generated separately and placed in:
-app/wake-word/
+apps/wakeword-inference/wake-word/
 The shared Edge Impulse Zephyr SDK is checked out as an external dependency.
 
 ## Inference Result
