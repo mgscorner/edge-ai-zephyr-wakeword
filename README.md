@@ -76,6 +76,18 @@ The Edge Impulse Zephyr deployment package is generated separately and placed in
 app/wake-word/
 The shared Edge Impulse Zephyr SDK is checked out as an external dependency.
 
+## Inference Result
+
+The first end-to-end inference test was executed successfully inside the
+QEMU-emulated Cortex-M33 Zephyr target using a known audio sample.
+<img width="855" height="323" alt="Screenshot 2026-09-02 001648" src="https://github.com/user-attachments/assets/0241ceef-a880-4efe-a300-83928e91de26" />
+
+**Note on timing:** The application is running on a QEMU-emulated Cortex-M33,
+not physical MCU hardware. The reported DSP and inference times therefore
+reflect the emulated environment and should not be interpreted as real
+Cortex-M33 performance. The purpose of this stage is to validate the complete
+Zephyr → DSP → model → classification path.
+
 ## Current Status
 
 - [x] Docker-based Zephyr development environment
@@ -85,9 +97,9 @@ The shared Edge Impulse Zephyr SDK is checked out as an external dependency.
 - [x] INT8 / EON model generation
 - [x] Edge Impulse Zephyr integration
 - [x] Model compiled and linked into Zephyr firmware
+- [x] Execute wake-word inference inside Zephyr/QEMU
+- [x] Feed recorded audio into the emulated target
 - [ ] Simulated microphone input
-- [ ] Feed recorded audio into the emulated target
-- [ ] Run wake-word inference
 - [ ] Forward inference results to the surrounding edge cluster
 
 ## Next Step: Simulated Microphone
