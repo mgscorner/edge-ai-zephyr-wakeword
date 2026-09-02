@@ -32,33 +32,44 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set home directory as the workspace root
 WORKDIR /root
 
-# 3. Create the python venv (Step 1 from the guide)
+# 3. Create Python virtual environment
 RUN python3 -m venv /root/zephyrproject/.venv
 
-# 4. Permanently update PATH for Docker build layers (Replaces 'source activate')
+# 4. Make virtual environment available to following Docker layers
 ENV PATH="/root/zephyrproject/.venv/bin:$PATH"
 
-# 5. Install west (Step 3 from the guide)
+# 5. Install west
 RUN pip install --no-cache-dir west
 
-# 6. Initialize workspace & pull modules (Step 4 from the guide)
-# Note: Chaining with && ensures the context doesn't lose the directory change
+# 6. Initialize Zephyr workspace and pull Zephyr modules
 RUN west init -m https://github.com/zephyrproject-rtos/zephyr /root/zephyrproject \
     && cd /root/zephyrproject \
     && west update
 
-# 7. Install Zephyr's exact Python dependencies (Step 5 from the guide)
+# 7. Install Edge Impulse Zephyr SDK
+# Pin to known-good revision for reproducible builds
+ARG EI_SDK_COMMIT=76d23c81eebf067646dec3024d594b687c99fd27
+
+RUN mkdir -p /root/zephyrproject/modules \
+    && git clone https://github.com/edgeimpulse/edge-impulse-sdk-zephyr.git \
+        /root/zephyrproject/modules/edge-impulse-sdk-zephyr \
+    && git -C /root/zephyrproject/modules/edge-impulse-sdk-zephyr \
+        checkout ${EI_SDK_COMMIT} \
+    && test -f /root/zephyrproject/modules/edge-impulse-sdk-zephyr/Kconfig \
+    && grep -q "kconfig: Kconfig" \
+        /root/zephyrproject/modules/edge-impulse-sdk-zephyr/zephyr/module.yml
+
+# 8. Install Zephyr Python dependencies
 RUN cd /root/zephyrproject \
     && west packages pip --install
 
-# 8. Export Zephyr CMake package (Step 6 from the guide)
+# 9. Export Zephyr CMake package
 RUN cd /root/zephyrproject \
     && west zephyr-export
 
-# 9. Install the Zephyr SDK Toolchains (From the SDK Section)
+# 10. Install Zephyr SDK toolchains
 RUN cd /root/zephyrproject/zephyr \
     && west sdk install
 
-# 10. AUTO-ACTIVATION FOR YOU: Ensure that when you log into the container,
-# the virtual environment is fully active and the prompt reflects it.
+# 11. Automatically activate virtual environment on shell login
 RUN echo "source /root/zephyrproject/.venv/bin/activate" >> /root/.bashrc
