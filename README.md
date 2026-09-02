@@ -60,6 +60,11 @@ EON generates optimized code for the trained network instead of relying only on
 the generic TensorFlow Lite Micro interpreter. For this model, Edge Impulse
 reported approximately **40% lower RAM** and **50% lower ROM/flash usage**.
 
+*To deploy an Edge Impulse wake-word model, model needs to be exported as 
+library and copied into src/wake-word.
+Deployment target: Zephyr library 
+Inference engine:  EON Compiler*
+
 ## Zephyr Integration
 
 The integration required:
